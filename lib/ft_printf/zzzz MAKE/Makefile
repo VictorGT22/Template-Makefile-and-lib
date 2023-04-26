@@ -3,26 +3,42 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vics <vics@student.42.fr>                  +#+  +:+       +#+         #
+#    By: victgonz <victgonz@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/27 15:37:53 by victgonz          #+#    #+#              #
-#    Updated: 2023/04/26 18:13:56 by vics             ###   ########.fr        #
+#    Updated: 2023/02/10 01:09:36 by victgonz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 ####	VARIABLES	####
-
-PROJECT = PUSHSWAP
-
 CC = gcc
 
-CFLAGS = ##-Wall -Wextra -Werror -std=c99
+CFLAGS = -std=c99
 
 SRC_DIR = src/
 
 OBJ_DIR = obj/
 
-SRC_FILES	=	template
+SRC_FILES	=	ft_printf 				\
+				func_ptr				\
+				func_putnbr 			\
+				utils_1					\
+				utils_2					\
+				std_func 				\
+				main					\
+				func_conv/func_s_c 		\
+				func_conv/func_e_f		\
+				func_conv/func_p		\
+				func_conv/func_u		\
+				func_conv/func_x		\
+				func_conv/func_o		\
+				func_conv/func_d_i		\
+				func_conv/func_b		\
+				func_conv/func_g		\
+				func_conv/func_n		\
+				get_info/get_info	 	\
+				get_info/get_info_2		\
+				free_info/free_1
 
 SOURCES = 	$(addprefix $(SRC_DIR), $(addsuffix .c, $(SRC_FILES)))
 
@@ -30,23 +46,13 @@ OBJECTS = 	$(addprefix $(OBJ_DIR), $(addsuffix .o, $(SRC_FILES)))
 
 OBJF		=	.cache_exists
 
-EXECUTABLE = push_swap
+EXECUTABLE = libftprintf.a
 
-## INCLUDES
+INCLUDES = -I./includes/include/
 
-INCLUDES = -I./include
-
-LIB_DIR = lib/my_lib
-
-INCLUDES_MY_LIB = -I./$(LIB_DIR)/include
-
-FT_PRINTF_DIR = lib/ft_printf
-
-INCLUDES_FT_PRINTF = -I./$(FT_PRINTF_DIR)/include
+LIB_DIR = lib/my
 
 LIB = -L./$(LIB_DIR) -lft
-
-FT_LIB = -L./$(FT_PRINTF_DIR) -lft
 
 ####	COLORS	####
 
@@ -62,38 +68,36 @@ WHITE = \033[0;97m
 
 #### COMMANDS ####
 
-all: libft $(EXECUTABLE) write_name
+all: libft $(EXECUTABLE) 
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(INCLUDES) $(INCLUDES_FT_PRINTF) $(INCLUDES_MY_LIB) $(OBJECTS) $(FT_LIB) $(LIB) -o $(EXECUTABLE)
+	$(CC) $(CFLAGS) $(INCLUDES) $(OBJECTS) $(LIB) -o $(EXECUTABLE) ## este es ejecutable
+
+##	ar -rcs $(EXECUTABLE) $(INCLUDES) $(OBJECTS) $(LIB)
 	@echo "$(MAGENTA)======>$(GREEN)$(EXECUTABLE) compiled! $(MAGENTA)<======$(DEF_COLOR)"
+##
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c | $(OBJF)
 	@echo "$(MAGENTA)======>$(GREEN)Compiling: $(YELLOW)$< $(DEF_COLOR)"
-	$(CC) $(CFLAGS) $(INCLUDES) $(INCLUDES_FT_PRINTF) $(INCLUDES_MY_LIB) -c $< -o $@
+##	${CC} ${CFLAGS} -MMD -I $(LIB) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJF):
 		@mkdir -p $(OBJ_DIR)
 
-write_name:
-		@echo "$(MAGENTA)╔═════════════════════════════════════════╗$(DEF_COLOR)"
-		@echo "$(MAGENTA)║                 $(CYAN)$(PROJECT)$(MAGENTA)                ║$(DEF_COLOR)"
-		@echo "$(MAGENTA)╚═══════════════╦═════════╦═══════════════╝$(DEF_COLOR)"
-		@echo "$(MAGENTA)                ║  $(GREEN)VIC'S$(MAGENTA)  ║$(DEF_COLOR)"
-		@echo "$(MAGENTA)                ╚═════════╝     $(DEF_COLOR)"
-
 clean:
 	rm -f $(OBJECTS)
+	make -C $(LIB_DIR) clean
 	@echo "$(MAGENTA)======>$(BLUE)$(EXECUTABLE) object files cleaned!$(DEF_COLOR)"
 
 fclean: clean
 	rm -f $(EXECUTABLE)
+	make -C $(LIB_DIR) fclean	
 	@echo "$(MAGENTA)======>$(CYAN)$(EXECUTABLE)executable files cleaned!$(DEF_COLOR)"
-	make -C $(LIB_DIR) fclean
-	make -C $(FT_PRINTF_DIR) fclean
 
 re: fclean all
 
 libft:
 	make -C $(LIB_DIR)
-	make -C $(FT_PRINTF_DIR)
+
+.PHONY: all clean fclean re
